@@ -210,3 +210,16 @@
     height: 400px;
     background-color: rgba(241, 242, 243, 1);
 }
+
+.menu-item .menu-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.menu-item.active .menu-link {
+  color: #FF8E8E;
+}

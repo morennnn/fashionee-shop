@@ -59,6 +59,22 @@ const Shop = () => {
   localStorage.setItem('favorites', JSON.stringify(updated));
   };
 
+  const addToCart = (product) => {
+  const stored = localStorage.getItem('cart');
+  const cart = stored ? JSON.parse(stored) : [];
+
+  const index = cart.findIndex(item => item.id === product.id);
+  if (index >= 0) {
+    cart[index].quantity += 1;
+  } else {
+    cart.push({ ...product, quantity: 1 });
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  window.dispatchEvent(new Event('cartUpdated'));
+};
+
+
   const filtered = productsData
   .filter(product =>
     (product.name || '').toLowerCase().includes(searchTerm.trim().toLowerCase())
@@ -112,8 +128,30 @@ return (
                 className="input search-raw"
                 value={draftSearch}
                 onChange={(e) => setDraftSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    setSearchTerm(draftSearch);
+                    setActiveCategory(draftCategory);
+                    setSelectedColors(draftColors);
+                    setPriceRange(draftPriceRange);
+                    setCurrentPage(1);
+                  }
+                }}
               />
-              <img src="/icons/search.svg" alt="search icon" className="search-icon" />
+              <img
+                src="/icons/search.svg"
+                alt="search icon"
+                className="search-icon"
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  setSearchTerm(draftSearch);
+                  setActiveCategory(draftCategory);
+                  setSelectedColors(draftColors);
+                  setPriceRange(draftPriceRange);
+                  setCurrentPage(1);
+                }}
+              />
             </label>
           </div>
 
@@ -277,12 +315,7 @@ return (
           ) : (
             <div className="products">
               {paginatedProducts.map(product => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  isFavorite={favorites.includes(product.id)}
-                  onToggleFavorite={() => toggleFavorite(product.id)}
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}

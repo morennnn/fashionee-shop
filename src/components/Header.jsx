@@ -1,10 +1,12 @@
 import '../styles/header.css';
 import { useEffect, useState } from 'react';
-
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [cartCount, setCartCount] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const updateFavoriteCount = () => {
@@ -35,8 +37,7 @@ const Header = () => {
     };
   }, []);
 
-
-
+  const isShopActive = location.pathname === '/';
 
   return (
     <header className="header">
@@ -53,17 +54,21 @@ const Header = () => {
           </div>
           <div className="menu">
             <div className="menu-item">
-              <span>Home</span>
+              <Link to="/" className="menu-link">
+                <span>Home</span>
+              </Link>
             </div>
             <div className="menu-item">
               <span>Pages</span>
               <img src="/icons/arrow.svg" className="arrow-default" alt="" />
               <img src="/icons/arrow-pink.svg" className="arrow-hover" alt="" />
             </div>
-            <div className="menu-item active">
-              <span>Shop</span>
-              <img src="/icons/arrow.svg" className="arrow-default" alt="" />
-              <img src="/icons/arrow-pink.svg" className="arrow-hover" alt="" />
+            <div className={`menu-item ${isShopActive ? 'active' : ''}`}>
+              <Link to="/" className="menu-link">
+                <span>Shop</span>
+                <img src="/icons/arrow.svg" className="arrow-default" alt="" />
+                <img src="/icons/arrow-pink.svg" className="arrow-hover" alt="" />
+              </Link>
             </div>
             <div className="menu-item">
               <span>Blog</span>
@@ -83,10 +88,15 @@ const Header = () => {
           <div className="header-icon">
             <img src="/icons/heart.svg" alt="favorites" />
             <div className="counter">{favoriteCount}</div>
-
           </div>
-
-          <div className="header-icon">
+          <div
+            className="header-icon"
+            onClick={() => navigate('/cart')}
+            style={{ cursor: 'pointer' }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/cart'); }}
+          >
             <img src="/icons/cart.svg" alt="cart" />
             <div className="counter">{cartCount}</div>
           </div>
@@ -99,10 +109,14 @@ const Header = () => {
             <div className="title">Shop</div>
             <div className="menu">
               <div className="menu-item">
-                <span>Home</span>
+                <Link to="/" className="menu-link">
+                  <span>Home</span>
+                </Link>
               </div>
-              <div className="menu-item active">
-                <span>Shop</span>
+              <div className={`menu-item ${isShopActive ? 'active' : ''}`}>
+                <Link to="/" className="menu-link">
+                  <span>Shop</span>
+                </Link>
               </div>
             </div>
           </div>

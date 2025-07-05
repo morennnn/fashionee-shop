@@ -173,42 +173,41 @@
     max-width: unset;
 }
 
-.cart .wrapper {
+.cart .cart-wrapper{
     max-width: 375px;
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 40px;
 }
-.cart .wrapper .info {
+.cart .cart-wrapper .info {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-
-.cart .wrapper .info .title {
+.cart .cart-wrapper .info .title {
     font-family: Josefin Sans;
     font-size: 32px;
     font-weight: 400;
     line-height: 39px;   
 }
 
-.cart .wrapper .info .description {
+.cart .cart-wrapper .info .description {
     font-size: 16px;
     font-weight: 400;
     line-height: 27px;
     color: rgba(68, 68, 68, 1);
 }
 
-.cart .wrapper .entry-field {
+.cart .cart-wrapper .entry-field {
     display: flex;
     gap: 30px;
 }
-.cart .wrapper .entry-field .button-wrapper {
+.cart .cart-wrapper .entry-field .button-wrapper {
     max-width: 55px;
 }
 
-.cart .wrapper .entry-field .button-wrapper .button {
+.cart .cart-wrapper .entry-field .button-wrapper .button {
     padding: 15px;
 }

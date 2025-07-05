@@ -42,22 +42,22 @@ const ProductCard = ({ product }) => {
   };
 
   const toggleFavorite = () => {
-  const stored = localStorage.getItem('favorites');
-  const current = stored ? JSON.parse(stored) : [];
+    const stored = localStorage.getItem('favorites');
+    const current = stored ? JSON.parse(stored) : [];
 
-  let updated;
+    let updated;
 
-  if (current.find(p => p.id === product.id)) {
-    updated = current.filter(p => p.id !== product.id);
-    setIsFavorite(false); 
-  } else {
-    updated = [...current, product];
-    setIsFavorite(true); 
-  }
+    if (current.find(p => p.id === product.id)) {
+      updated = current.filter(p => p.id !== product.id);
+      setIsFavorite(false);
+    } else {
+      updated = [...current, product];
+      setIsFavorite(true);
+    }
 
-  localStorage.setItem('favorites', JSON.stringify(updated));
-  window.dispatchEvent(new Event('favoritesUpdated'));
-};
+    localStorage.setItem('favorites', JSON.stringify(updated));
+    window.dispatchEvent(new Event('favoritesUpdated'));
+  };
 
   return (
     <div className="product">
@@ -75,7 +75,7 @@ const ProductCard = ({ product }) => {
             />
           </div>
         </div>
-          <button className="add-to-cart" onClick={handleAddToCart}>Add to Cart</button> 
+        <button className="add-to-cart" onClick={handleAddToCart}>Add to Cart</button>
       </div>
       <div className="info">
         <div className="name">{name.split('#')[0].trim()}</div>
@@ -86,8 +86,6 @@ const ProductCard = ({ product }) => {
       </div>
     </div>
   );
-
-
 };
 
 export default ProductCard;
