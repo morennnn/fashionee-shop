@@ -211,3 +211,17 @@
 .cart .cart-wrapper .entry-field .button-wrapper .button {
     padding: 15px;
 }
+
+.promo-message {
+  margin-top: 10px;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.promo-message.success {
+  color: #4CAF50;
+}
+
+.promo-message.error {
+  color: #999;
+}

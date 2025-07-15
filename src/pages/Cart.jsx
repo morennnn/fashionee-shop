@@ -3,6 +3,9 @@ import '../styles/cart.css';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [promoCode, setPromoCode] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState('');
+  const [isPromoValid, setIsPromoValid] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('cart');
@@ -18,14 +21,16 @@ const Cart = () => {
   };
 
   const decrementQuantity = (id) => {
-    const newCart = cartItems
-      .map(item => item.id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item);
+    const newCart = cartItems.map(item =>
+      item.id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item
+    );
     updateCart(newCart);
   };
 
   const incrementQuantity = (id) => {
-    const newCart = cartItems
-      .map(item => item.id === id ? { ...item, quantity: item.quantity + 1 } : item);
+    const newCart = cartItems.map(item =>
+      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+    );
     updateCart(newCart);
   };
 
@@ -36,7 +41,28 @@ const Cart = () => {
 
   const orderPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryPrice = cartItems.length > 0 ? 16 : 0;
-  const totalPrice = orderPrice + deliveryPrice;
+  const discount = isPromoValid ? orderPrice * 0.1 : 0;
+  const totalPrice = orderPrice - discount + deliveryPrice;
+
+  const handleApplyPromo = () => {
+    if (promoCode.trim().toLowerCase() === 'ilovereact') {
+      setIsPromoValid(true);
+    } else {
+      setIsPromoValid(false);
+    }
+  };
+
+  const handleCheckout = () => {
+    console.log('Checkout Order:', {
+      products: cartItems,
+      orderPrice: orderPrice.toFixed(2),
+      discount: discount.toFixed(2),
+      delivery: deliveryPrice.toFixed(2),
+      total: totalPrice.toFixed(2),
+      promoCode: appliedPromo
+    });
+    alert('Checkout data has been logged to console.');
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -80,6 +106,7 @@ const Cart = () => {
                 </div>
               ))}
             </div>
+
             <div className="order">
               <div className="title">Your Order</div>
               <div className="order-price-wrapper">
@@ -89,7 +116,7 @@ const Cart = () => {
                 </div>
                 <div className="price-row">
                   <div className="name">Discount for promo code</div>
-                  <div>No</div>
+                  <div className="price">-${discount.toFixed(2)}</div>
                 </div>
                 <div className="price-row delimiter">
                   <div className="name">
@@ -103,11 +130,12 @@ const Cart = () => {
                 </div>
               </div>
               <div className="button-wrapper">
-                <button className="button">Checkout</button>
+                <button className="button" onClick={handleCheckout}>Checkout</button>
                 <div className="vertical-line"></div>
               </div>
             </div>
           </div>
+
           <div className="cart-wrapper">
             <div className="info">
               <div className="title">You Have A Promo Code?</div>
@@ -116,32 +144,43 @@ const Cart = () => {
               </div>
             </div>
             <div className="entry-field">
-              <input
-                type="text"
-                name="entry-field"
-                className="input"
-                placeholder="Enter promo code"
-              />
-              <div className="button-wrapper">
-                <button className="button">
-                  <img src="icons/button-arrow.svg" alt="Arrow Icon" />
-                </button>
-                <div className="vertical-line"></div>
-              </div>
+  <input
+    type="text"
+    name="entry-field"
+    className="input"
+    placeholder="Enter promo code"
+    value={promoCode}
+    onChange={(e) => setPromoCode(e.target.value)}
+  />
+  <div className="button-wrapper">
+    <button className="button" onClick={handleApplyPromo}>
+      <img src="icons/button-arrow.svg" alt="Arrow Icon" />
+    </button>
+    <div className="vertical-line"></div>
+  </div>
             </div>
+
+            {isPromoValid === true && (
+              <div className="promo-message success">Promo applied: -10%</div>
+            )}
+            {isPromoValid === false && (
+              <div className="promo-message error">Invalid promo code</div>
+            )}
+
             <div className="find-us">
               <div className="find-us-text">Find us here:</div>
               <div className="find-us-links">
-                <div className="find-us-link"><a href="">FB</a></div>
+                <div className="find-us-link"><a href="#">FB</a></div>
                 <div className="line"></div>
-                <div className="find-us-link"><a href="">TW</a></div>
+                <div className="find-us-link"><a href="#">TW</a></div>
                 <div className="line"></div>
-                <div className="find-us-link"><a href="">INS</a></div>
+                <div className="find-us-link"><a href="#">INS</a></div>
                 <div className="line"></div>
-                <div className="find-us-link"><a href="">PT</a></div>
+                <div className="find-us-link"><a href="#">PT</a></div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
