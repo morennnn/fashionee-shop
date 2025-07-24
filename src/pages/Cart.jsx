@@ -68,7 +68,9 @@ const Cart = () => {
     return (
       <div className="container">
         <div className="content">
-          <h2>Your cart is empty</h2>
+          <div className="cart-is-empty">
+            <h2>Your cart is empty</h2>
+          </div>
         </div>
       </div>
     );

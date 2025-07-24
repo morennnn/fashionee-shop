@@ -33,8 +33,15 @@
 .cart .order-wrapper .product-list .product .photo {
     max-width: 130px;
     height: 140px;
-    background-color: rgba(241, 242, 243, 1);
+    background-color: #f9f9fb;
     width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.cart .order-wrapper .product-list .product .photo img{
+    width: 130px;
+    height: 140px;
 }
 
 .cart .order-wrapper .product-list .product .product-info {
@@ -224,4 +231,8 @@
 
 .promo-message.error {
   color: #999;
+}
+
+.cart-is-empty {
+    padding: 60px;
 }

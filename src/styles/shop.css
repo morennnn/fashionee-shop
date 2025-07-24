@@ -151,7 +151,7 @@
 .shop .sidebar .sidebar-item .sidebar-content .reviewed-products .product .image {
     width: 75px;
     height: 85px;
-    background: rgba(241, 242, 243, 1);
+    background: #f9f9fb;
     flex-shrink: 0;
     display: flex;
     justify-content: center;

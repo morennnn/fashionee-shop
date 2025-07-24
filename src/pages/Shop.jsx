@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import '../styles/shop.css';
 import productsJson from '../data/products.json';
 import ProductCard from '../components/ProductCard';
+import SortAndCount from '../components/SortAndCount';
 import ReactSlider from 'react-slider';
 import { useMemo } from 'react';
 
@@ -293,22 +294,11 @@ return (
 
         {/* MAIN CONTENT: PRODUCTS */}
         <div className="products-wrapper">
-          <div className="sort-and-count">
-            <div className="products-count">
-              There are <span className="bold">{sortedProducts.length}</span> products in this category
-            </div>
-            <div className="sort">
-              <select
-                className="input"
-                value={sortType}
-                onChange={(e) => setSortType(e.target.value)}
-              >
-                <option value="RELEVANCE">Relevance</option>
-                <option value="ASC">A–Z</option>
-                <option value="PRICE">Price</option>
-              </select>
-            </div>
-          </div>
+          <SortAndCount
+            total={sortedProducts.length}
+            sortType={sortType}
+            onChangeSort={setSortType}
+          />
 
           {sortedProducts.length === 0 ? (
             <div className="no-results">No products found</div>
