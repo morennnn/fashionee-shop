@@ -49,10 +49,20 @@
 ```
 src/
 ├── components/
-│   ├── Header.jsx
+│   ├── filters/
+│   │   ├── ApplyFilter.jsx
+│   │   ├── CategoryFilter.jsx
+│   │   ├── ColorFilter.jsx
+│   │   ├── PriceFilter.jsx
+│   │   └── SearchFilter.jsx
+│   │
 │   ├── Footer.jsx
+│   ├── Header.jsx
 │   ├── Layout.jsx
+│   ├── Newsletter.jsx
+│   ├── Pagination.jsx
 │   ├── ProductCard.jsx
+│   ├── ReviewedByYou.jsx
 │   └── SortAndCount.jsx
 │  
 ├── pages/
