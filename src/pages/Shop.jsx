@@ -3,6 +3,14 @@ import '../styles/shop.css';
 import productsJson from '../data/products.json';
 import ProductCard from '../components/ProductCard';
 import SortAndCount from '../components/SortAndCount';
+import SearchFilter from '../components/filters/SearchFilter';
+import CategoryFilter from '../components/filters/CategoryFilter';
+import PriceFilter from '../components/filters/PriceFilter';
+import ColorFilter from '../components/filters/ColorFilter';
+import ApplyFilter from '../components/filters/ApplyFilter';
+import ReviewedByYou from '../components/ReviewedByYou';
+import Newsletter from '../components/Newsletter';
+import Pagination from '../components/Pagination';
 import ReactSlider from 'react-slider';
 import { useMemo } from 'react';
 
@@ -13,6 +21,13 @@ const Shop = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [priceRange, setPriceRange] = useState([0, 221]);
   const [selectedColors, setSelectedColors] = useState([]);
+  const applyFilters = () => {
+    setSearchTerm(draftSearch);
+    setActiveCategory(draftCategory);
+    setSelectedColors(draftColors);
+    setPriceRange(draftPriceRange);
+    setCurrentPage(1);
+  };
   const [filtersExpanded, setFiltersExpanded] = useState(true);
   const [showColors, setShowColors] = useState(true);
   const itemsPerPage = 12;
@@ -121,168 +136,45 @@ return (
         {/* SIDEBAR */}
         <div className="sidebar">
           {/* Search */}
-          <div className="search">
-            <label>
-              <input
-                type="text"
-                placeholder="Search"
-                className="input search-raw"
-                value={draftSearch}
-                onChange={(e) => setDraftSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    setSearchTerm(draftSearch);
-                    setActiveCategory(draftCategory);
-                    setSelectedColors(draftColors);
-                    setPriceRange(draftPriceRange);
-                    setCurrentPage(1);
-                  }
-                }}
-              />
-              <img
-                src="/icons/search.svg"
-                alt="search icon"
-                className="search-icon"
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  setSearchTerm(draftSearch);
-                  setActiveCategory(draftCategory);
-                  setSelectedColors(draftColors);
-                  setPriceRange(draftPriceRange);
-                  setCurrentPage(1);
-                }}
-              />
-            </label>
-          </div>
+          <SearchFilter
+            draftSearch={draftSearch}
+            setDraftSearch={setDraftSearch}
+            applyFilters={applyFilters}
+          />
 
           {/* Categories */}
-          <div className="sidebar-item">
-            <div className="sidebar-title">Categories</div>
-            <div className="sidebar-content">
-              <ul className="custom-list">
-                {['All', 'Men', 'Women', 'Accessories', 'New Arrivals'].map(category => (
-                  <li
-                    key={category}
-                    className={`item ${draftCategory === category ? 'active' : ''}`}
-                    onClick={() => setDraftCategory(category)}
-                  >
-                    {category}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <CategoryFilter
+            draftCategory={draftCategory}
+            setDraftCategory={setDraftCategory}
+          />
 
           {/* Price Range */}
-          <div className="sidebar-item">
-            <div className="sidebar-title">Price</div>
-            <div className="sidebar-content">
-              <div className="price-bar">
-                <ReactSlider
-                  className="range-slider"
-                  thumbClassName="thumb"
-                  trackClassName="track"
-                  min={0}
-                  max={221}
-                  value={draftPriceRange}
-                  onChange={setDraftPriceRange}
-                  pearling
-                  minDistance={10}
-                  renderThumb={(props, state) => (
-                    <div {...props} className="thumb">
-                      <div className="thumb-label">${state.valueNow.toFixed(2)}</div>
-                    </div>
-                  )}
-                />
-              </div>
-            </div>
-          </div>
+          <PriceFilter
+            draftPriceRange={draftPriceRange}
+            setDraftPriceRange={setDraftPriceRange}
+          />
 
           {/* Colors */}
-          <div className="sidebar-item">
-            <div className="sidebar-title">Colors</div>
-            <div className={`sidebar-content collapsible ${showColors ? 'expanded' : 'collapsed'}`}>
-              <div className="colors">
-                {availableColors.map(color => (
-                  <div className="color" key={color}>
-                    <input
-                      type="checkbox"
-                      className="color-checkbox"
-                      id={color}
-                      value={color}
-                      checked={draftColors.includes(color)}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setDraftColors(prev =>
-                          prev.includes(value)
-                            ? prev.filter(c => c !== value)
-                            : [...prev, value]
-                        );
-                      }}
-                    />
-                    <label htmlFor={color} className="color-name">{color}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Collapse toggle */}
-          <div
-            className="deploy-toggle"
-            onClick={() => setShowColors(prev => !prev)}
-          >
-            <img
-              src="/icons/chevron-down.svg"
-              alt="chevron"
-              className={`deploy-icon ${showColors ? '' : 'rotated'}`}
-            />
-            <span className="deploy-text">Deploy</span>
-          </div>
+          <ColorFilter
+            availableColors={availableColors}
+            draftColors={draftColors}
+            setDraftColors={setDraftColors}
+            showColors={showColors}
+            setShowColors={setShowColors}
+          /> 
 
           {/* Apply Filter */}
-          <div className="sidebar-item">
-            <div className="button-wrapper">
-              <button
-                className="button"
-                onClick={() => {
-                  setSearchTerm(draftSearch);
-                  setActiveCategory(draftCategory);
-                  setSelectedColors(draftColors);
-                  setPriceRange(draftPriceRange);
-                }}
-              >
-                Apply Filter
-              </button>
-              <div className="vertical-line"></div>
-            </div>
-          </div>
+          <ApplyFilter
+            onApply={() => {
+              setSearchTerm(draftSearch);
+              setActiveCategory(draftCategory);
+              setSelectedColors(draftColors);
+              setPriceRange(draftPriceRange);
+            }}
+          />
 
           {/* Reviewed by you */}
-          <div className="sidebar-item">
-            <div className="sidebar-title">Reviewed by you</div>
-            <div className="sidebar-content">
-              <div className="reviewed-products">
-                {reviewedProducts.map((product) => (
-                  <div className="product" key={product.id}>
-                    <div className="image">
-                      <img src={product.image} alt={product.name.split('#')[0].trim()} />
-                    </div>
-                    <div className="info">
-                      <div className="name">{product.name.split('#')[0].trim()}</div>
-                      <div className="price">
-                        <div className="current-price">${product.price}</div>
-                        {product.oldPrice && (
-                          <div className="old-price">${product.oldPrice}</div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ReviewedByYou reviewedProducts={reviewedProducts} />
 
           {/* Banner */}
           <div className="banner">
@@ -305,61 +197,22 @@ return (
           ) : (
             <div className="products">
               {paginatedProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
+            ))}
             </div>
           )}
 
-          <div className="pagination">
-            <div
-              className="button left"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            >
-              <img src="/icons/left-pagin-arrow.svg" alt="prev" />
-            </div>
-            <div className="pages">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <div
-                  key={i + 1}
-                  className={`page ${currentPage === i + 1 ? 'active' : ''}`}
-                  onClick={() => setCurrentPage(i + 1)}
-                >
-                  {i + 1}
-                </div>
-              ))}
-            </div>
-            <div
-              className="button right"
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            >
-              <img src="/icons/right-pagin-arrow.svg" alt="next" />
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </div>
 
     {/* NEWSLETTER */}
-    <div className="wrapper">
-      <div className="newsletter">
-        <div className="container-points">
-          <img src="icons/points-mini.svg" alt="points" />
-        </div>
-        <div className="info">
-          <div className="title">Newsletter</div>
-          <div className="description">
-            Be the first to hear about deals, offers and upcoming collections.
-          </div>
-        </div>
-        <div className="entry-field">
-          <input type="text" name="entry-field" className="input" placeholder="Enter your email" />
-          <div className="button-wrapper">
-            <button className="button">Subscribe</button>
-            <div className="vertical-line"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Newsletter />
   </div>
 );
 }
