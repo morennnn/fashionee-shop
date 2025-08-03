@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ApplyFilter = ({ onApply }) => {
   return (
     <div className="sidebar-item">

@@ -1,6 +1,11 @@
-import React from 'react';
+import { useMemo } from 'react';
+import productsJson from '../data/products.json';
 
-const ReviewedByYou = ({ reviewedProducts }) => {
+const ReviewedByYou = () => {
+  const reviewedProducts = useMemo(() => {
+    const shuffled = [...productsJson.products].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 3);
+  }, []); 
   return (
     <div className="sidebar-item">
       <div className="sidebar-title">Reviewed by you</div>

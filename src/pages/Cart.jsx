@@ -1,42 +1,25 @@
-import { useState, useEffect } from 'react';
-import '../styles/cart.css';
+import { useState } from 'react';
+import { useCartFavorites } from '../context/CartFavoritesContext';
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([]);
+  const { cartItems, updateCartItem } = useCartFavorites();
+
   const [promoCode, setPromoCode] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState('');
   const [isPromoValid, setIsPromoValid] = useState(null);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('cart');
-    if (stored) {
-      setCartItems(JSON.parse(stored));
-    }
-  }, []);
-
-  const updateCart = (newCart) => {
-    setCartItems(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
-    window.dispatchEvent(new Event('cartUpdated')); 
-  };
-
   const decrementQuantity = (id) => {
-    const newCart = cartItems.map(item =>
-      item.id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item
-    );
-    updateCart(newCart);
+    const item = cartItems.find(i => i.id === id);
+    if (item) updateCartItem(item, Math.max(1, item.quantity - 1));
   };
 
   const incrementQuantity = (id) => {
-    const newCart = cartItems.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    updateCart(newCart);
+    const item = cartItems.find(i => i.id === id);
+    if (item) updateCartItem(item, item.quantity + 1);
   };
 
   const removeItem = (id) => {
-    const newCart = cartItems.filter(item => item.id !== id);
-    updateCart(newCart);
+    const item = cartItems.find(i => i.id === id);
+    if (item) updateCartItem(item, 0);
   };
 
   const orderPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -59,7 +42,7 @@ const Cart = () => {
       discount: discount.toFixed(2),
       delivery: deliveryPrice.toFixed(2),
       total: totalPrice.toFixed(2),
-      promoCode: appliedPromo
+      promoCode: promoCode.trim(),
     });
     alert('Checkout data has been logged to console.');
   };
@@ -146,20 +129,20 @@ const Cart = () => {
               </div>
             </div>
             <div className="entry-field">
-  <input
-    type="text"
-    name="entry-field"
-    className="input"
-    placeholder="Enter promo code"
-    value={promoCode}
-    onChange={(e) => setPromoCode(e.target.value)}
-  />
-  <div className="button-wrapper">
-    <button className="button" onClick={handleApplyPromo}>
-      <img src="icons/button-arrow.svg" alt="Arrow Icon" />
-    </button>
-    <div className="vertical-line"></div>
-  </div>
+              <input
+                type="text"
+                name="entry-field"
+                className="input"
+                placeholder="Enter promo code"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+              />
+              <div className="button-wrapper">
+                <button className="button" onClick={handleApplyPromo}>
+                  <img src="icons/button-arrow.svg" alt="Arrow Icon" />
+                </button>
+                <div className="vertical-line"></div>
+              </div>
             </div>
 
             {isPromoValid === true && (

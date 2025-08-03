@@ -1,3 +1,6 @@
+import { useEffect, useMemo } from 'react';
+import debounce from 'lodash.debounce';
+
 const SearchFilter = ({
   draftSearch,
   setDraftSearch,
@@ -6,9 +9,19 @@ const SearchFilter = ({
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      applyFilters();
+      applyFilters(); 
     }
   };
+
+  const debouncedApplyFilters = useMemo(
+    () => debounce(applyFilters, 300),
+    [applyFilters]
+  );
+
+  useEffect(() => {
+    debouncedApplyFilters();
+    return debouncedApplyFilters.cancel;
+  }, [draftSearch]);
 
   return (
     <div className="search">
@@ -26,7 +39,7 @@ const SearchFilter = ({
           alt="search icon"
           className="search-icon"
           style={{ cursor: 'pointer' }}
-          onClick={applyFilters}
+          onClick={applyFilters} 
         />
       </label>
     </div>

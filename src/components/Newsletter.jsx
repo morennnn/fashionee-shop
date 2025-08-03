@@ -1,6 +1,8 @@
-import React from 'react';
-
 const Newsletter = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <div className="wrapper">
       <div className="newsletter">
@@ -8,23 +10,24 @@ const Newsletter = () => {
           <img src="icons/points-mini.svg" alt="points" />
         </div>
         <div className="info">
-          <div className="title">Newsletter</div>
-          <div className="description">
+          <h2 className="title">Newsletter</h2>
+          <p className="description">
             Be the first to hear about deals, offers and upcoming collections.
-          </div>
+          </p>
         </div>
-        <div className="entry-field">
+        <form className="entry-field" onSubmit={handleSubmit}>
           <input
-            type="text"
-            name="entry-field"
+            type="email"
+            name="email"
             className="input"
             placeholder="Enter your email"
+            required
           />
           <div className="button-wrapper">
-            <button className="button">Subscribe</button>
+            <button type="submit" className="button">Subscribe</button>
             <div className="vertical-line"></div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

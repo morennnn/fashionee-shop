@@ -1,43 +1,56 @@
-import '../styles/header.css';
-import { useEffect, useState } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import { useCartFavorites } from '../context/CartFavoritesContext';
+
+const MenuItem = ({ to, children, withArrow = false, disabled = false }) => {
+  const location = useLocation();
+  const isActiveCustom = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
+
+  return (
+    <div className={`menu-item ${isActiveCustom ? 'active' : ''}`}>
+      {to && !disabled ? (
+        <NavLink
+          to={to}
+          className={({ isActive }) =>
+            `menu-link ${isActive ? 'active' : ''}`
+          }
+        >
+          <span>{children}</span>
+          {withArrow && (
+            <>
+              <img src="/icons/arrow.svg" className="arrow-default" alt="" />
+              <img src="/icons/arrow-pink.svg" className="arrow-hover" alt="" />
+            </>
+          )}
+        </NavLink>
+      ) : (
+        <>
+          <span>{children}</span>
+          {withArrow && (
+            <>
+              <img src="/icons/arrow.svg" className="arrow-default" alt="" />
+              <img src="/icons/arrow-pink.svg" className="arrow-hover" alt="" />
+            </>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
 
 const Header = () => {
-  const [favoriteCount, setFavoriteCount] = useState(0);
-  const [cartCount, setCartCount] = useState(0);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { cartCount, favoriteCount } = useCartFavorites();
 
-  useEffect(() => {
-    const updateFavoriteCount = () => {
-      const stored = localStorage.getItem('favorites');
-      const favs = stored ? JSON.parse(stored) : [];
-      setFavoriteCount(favs.length);
-    };
+  const leftMenuItems = [
+    { label: "Home", disabled: true },
+    { label: "Pages", withArrow: true }, 
+    { to: "/", label: "Shop", withArrow: true },
+    { label: "Contact" },
+  ];
 
-    updateFavoriteCount();
-    window.addEventListener('favoritesUpdated', updateFavoriteCount);
-    return () => {
-      window.removeEventListener('favoritesUpdated', updateFavoriteCount);
-    };
-  }, []);
-
-  useEffect(() => {
-    const updateCartCount = () => {
-      const stored = localStorage.getItem('cart');
-      const cart = stored ? JSON.parse(stored) : [];
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-      setCartCount(totalItems);
-    };
-
-    updateCartCount();
-    window.addEventListener('cartUpdated', updateCartCount);
-    return () => {
-      window.removeEventListener('cartUpdated', updateCartCount);
-    };
-  }, []);
-
-  const isShopActive = location.pathname === '/';
+  const middleMenuItems = [
+    { label: "Home", disabled: true },
+    { to: "/", label: "Shop" },
+  ];
 
   return (
     <header className="header">
@@ -52,32 +65,16 @@ const Header = () => {
               <img src="/icons/logo.svg" alt="logo" />
             </div>
           </div>
+
           <div className="menu">
-            <div className="menu-item">
-              <Link to="/" className="menu-link">
-                <span>Home</span>
-              </Link>
-            </div>
-            <div className="menu-item">
-              <span>Pages</span>
-              <img src="/icons/arrow.svg" className="arrow-default" alt="" />
-              <img src="/icons/arrow-pink.svg" className="arrow-hover" alt="" />
-            </div>
-            <div className={`menu-item ${isShopActive ? 'active' : ''}`}>
-              <Link to="/" className="menu-link">
-                <span>Shop</span>
-                <img src="/icons/arrow.svg" className="arrow-default" alt="" />
-                <img src="/icons/arrow-pink.svg" className="arrow-hover" alt="" />
-              </Link>
-            </div>
-            <div className="menu-item">
-              <span>Blog</span>
-            </div>
-            <div className="menu-item">
-              <span>Contact</span>
-            </div>
+            {leftMenuItems.map(({ to, label, withArrow, disabled }, idx) => (
+              <MenuItem key={idx} to={to} withArrow={withArrow} disabled={disabled}>
+                {label}
+              </MenuItem>
+            ))}
           </div>
         </div>
+
         <div className="right-side">
           <div className="header-icon">
             <img src="/icons/search.svg" alt="search" />
@@ -85,21 +82,16 @@ const Header = () => {
           <div className="header-icon">
             <img src="/icons/profile.svg" alt="profile" />
           </div>
+
           <div className="header-icon">
             <img src="/icons/heart.svg" alt="favorites" />
             <div className="counter">{favoriteCount}</div>
           </div>
-          <div
-            className="header-icon"
-            onClick={() => navigate('/cart')}
-            style={{ cursor: 'pointer' }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/cart'); }}
-          >
+
+          <NavLink to="/cart" className="header-icon" style={{ cursor: 'pointer' }}>
             <img src="/icons/cart.svg" alt="cart" />
             <div className="counter">{cartCount}</div>
-          </div>
+          </NavLink>
         </div>
       </div>
 
@@ -108,16 +100,11 @@ const Header = () => {
           <div className="content">
             <div className="title">Shop</div>
             <div className="menu">
-              <div className="menu-item">
-                <Link to="/" className="menu-link">
-                  <span>Home</span>
-                </Link>
-              </div>
-              <div className={`menu-item ${isShopActive ? 'active' : ''}`}>
-                <Link to="/" className="menu-link">
-                  <span>Shop</span>
-                </Link>
-              </div>
+              {middleMenuItems.map(({ to, label, disabled }, idx) => (
+                <MenuItem key={idx} to={to} disabled={disabled}>
+                  {label}
+                </MenuItem>
+              ))}
             </div>
           </div>
           <div className="container-middle-line">

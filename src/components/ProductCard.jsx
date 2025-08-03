@@ -1,67 +1,34 @@
-import { useState, useEffect } from 'react';
-import '../styles/shop.css';
+import { useMemo, useCallback } from 'react';
+import { useCartFavorites } from '../context/CartFavoritesContext';
 
 const ProductCard = ({ product }) => {
+  const { id, name, price, oldPrice, image, isNew, isSale } = product;
+
   const {
-    id,
-    name,
-    price,
-    oldPrice,
-    image,
-    isNew,
-    isSale,
-  } = product;
+    favorites,
+    cartItems,
+    toggleFavorite,
+    updateCartItem
+  } = useCartFavorites();
 
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [cartQty, setCartQty] = useState(0);
+  const isFavorite = useMemo(() => favorites.some(item => item.id === id), [favorites, id]);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('favorites');
-    const exists = stored ? JSON.parse(stored).find(item => item.id === id) : null;
-    setIsFavorite(!!exists);
+  const cartQty = useMemo(() => {
+    const item = cartItems.find(item => item.id === id);
+    return item ? item.quantity : 0;
+  }, [cartItems, id]);
 
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const found = cart.find(item => item.id === id);
-    setCartQty(found ? found.quantity : 0);
-  }, [id]);
+  const handleAdd = useCallback(() => {
+    updateCartItem(product, cartQty + 1);
+  }, [updateCartItem, product, cartQty]);
 
-  const toggleFavorite = () => {
-    const stored = localStorage.getItem('favorites');
-    const current = stored ? JSON.parse(stored) : [];
+  const handleRemove = useCallback(() => {
+    updateCartItem(product, Math.max(cartQty - 1, 0));
+  }, [updateCartItem, product, cartQty]);
 
-    let updated;
-
-    if (current.find(p => p.id === id)) {
-      updated = current.filter(p => p.id !== id);
-      setIsFavorite(false);
-    } else {
-      updated = [...current, product];
-      setIsFavorite(true);
-    }
-
-    localStorage.setItem('favorites', JSON.stringify(updated));
-    window.dispatchEvent(new Event('favoritesUpdated'));
-  };
-
-  const updateCart = (qty) => {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const index = cart.findIndex(item => item.id === id);
-
-    if (qty === 0) {
-      cart = cart.filter(item => item.id !== id);
-    } else if (index >= 0) {
-      cart[index].quantity = qty;
-    } else {
-      cart.push({ ...product, quantity: qty });
-    }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
-    setCartQty(qty);
-    window.dispatchEvent(new Event('cartUpdated'));
-  };
-
-  const handleAdd = () => updateCart(cartQty + 1);
-  const handleRemove = () => updateCart(Math.max(cartQty - 1, 0));
+  const handleToggleFavorite = useCallback(() => {
+    toggleFavorite(product);
+  }, [toggleFavorite, product]);
 
   return (
     <div className="product">
@@ -72,10 +39,16 @@ const ProductCard = ({ product }) => {
             {isSale && <div className="label sale">SALE</div>}
             {isNew && <div className="label new">NEW</div>}
           </div>
-          <div className="favorites" onClick={toggleFavorite}>
+          <div
+            className="favorites"
+            onClick={handleToggleFavorite}
+            role="button"
+            tabIndex={0}
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
             <img
               src={isFavorite ? '/icons/heart-filled.svg' : '/icons/heart.svg'}
-              alt="heart icon"
+              alt={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
             />
           </div>
         </div>
@@ -94,8 +67,8 @@ const ProductCard = ({ product }) => {
       <div className="info">
         <div className="name">{name.split('#')[0].trim()}</div>
         <div className="price">
-          <div className="current-price">${price}</div>
-          {oldPrice && <div className="old-price">${oldPrice}</div>}
+          <div className="current-price">${price.toFixed(2)}</div>
+          {oldPrice && <div className="old-price">${oldPrice.toFixed(2)}</div>}
         </div>
       </div>
     </div>
